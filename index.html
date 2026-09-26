@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evil Twin Attack — Cybersecurity Awareness</title>
+<style>
+:root{
+  --bg:#070b14; --panel:#0e1524; --panel2:#111b2e; --text:#e8eefc;
+  --muted:#9aa8c2; --accent:#61dafb; --danger:#ff5c7a; --safe:#55e39b;
+  --line:#24324b; --gold:#ffd166;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:
+  radial-gradient(circle at 20% 0%,#142a45 0,transparent 35%),
+  radial-gradient(circle at 90% 20%,#27152d 0,transparent 30%),var(--bg);
+  color:var(--text);line-height:1.65;overflow-x:hidden
+}
+nav{position:sticky;top:0;z-index:20;background:rgba(7,11,20,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);padding:12px 5%;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;letter-spacing:.5px}.logo span{color:var(--danger)}
+nav a{color:var(--muted);text-decoration:none;margin-left:20px;font-size:.9rem}
+nav a:hover{color:var(--accent)}
+.container{width:min(1100px,92%);margin:auto}
+.hero{min-height:82vh;display:grid;place-items:center;padding:70px 0 40px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:45px;align-items:center}
+.badge{display:inline-block;border:1px solid #35506e;border-radius:999px;padding:7px 13px;color:var(--accent);background:#0b1727}
+h1{font-size:clamp(2.6rem,6vw,5rem);line-height:1.02;margin:18px 0}
+h1 span{color:var(--danger)}
+.lead{font-size:1.12rem;color:var(--muted);max-width:650px}
+.btn{display:inline-block;margin-top:18px;padding:12px 18px;border-radius:10px;background:var(--accent);color:#061018;
+  text-decoration:none;font-weight:800;margin-right:8px}
+.btn.alt{background:transparent;color:var(--text);border:1px solid var(--line)}
+.card{background:linear-gradient(145deg,rgba(17,27,46,.92),rgba(10,16,29,.92));border:1px solid var(--line);
+  border-radius:18px;padding:25px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.wifi-scene{position:relative;height:370px;display:grid;place-items:center;overflow:hidden}
+.laptop{width:210px;height:135px;border:7px solid #6c7d9a;border-radius:12px 12px 5px 5px;background:#0a1120;position:relative;z-index:3}
+.laptop:after{content:"";position:absolute;left:-35px;right:-35px;bottom:-25px;height:12px;border-radius:20px;background:#6c7d9a}
+.screen{padding:20px;color:var(--accent);font-weight:800;text-align:center}
+.router{position:absolute;right:9%;top:23%;width:70px;height:45px;border-radius:9px;background:#17243a;border:1px solid #40526e;z-index:2}
+.router:before{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--danger);left:12px;top:18px;box-shadow:18px 0 var(--safe),36px 0 var(--safe)}
+.signal,.signal:before,.signal:after{position:absolute;border:2px solid var(--danger);border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;transform:rotate(-45deg)}
+.signal{width:180px;height:180px;right:2%;top:6%;opacity:.25;animation:pulse 2s infinite}
+.signal:before{content:"";width:130px;height:130px;left:23px;top:23px}
+.signal:after{content:"";width:80px;height:80px;left:48px;top:48px}
+.packet{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--gold);z-index:4;animation:travel 3s infinite linear}
+.packet.p2{animation-delay:1s}.packet.p3{animation-delay:2s}
+@keyframes travel{0%{left:10%;top:72%;opacity:0}15%{opacity:1}75%{opacity:1}100%{left:76%;top:40%;opacity:0}}
+@keyframes pulse{50%{transform:rotate(-45deg) scale(1.08);opacity:.45}}
+section{padding:75px 0}
+.section-title{font-size:2rem;margin:0 0 10px}.section-sub{color:var(--muted);margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.three{grid-template-columns:repeat(3,1fr)}
+.icon{font-size:2rem;margin-bottom:8px}
+.card h3{margin:5px 0 8px}.card p{color:var(--muted);margin:0}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:25px}
+.step{position:relative;padding:20px;border:1px solid var(--line);border-radius:14px;background:#0b1220}
+.step b{display:flex;width:30px;height:30px;border-radius:50%;background:#20314b;align-items:center;justify-content:center;margin-bottom:10px;color:var(--accent)}
+.risk{border-left:3px solid var(--danger)} .safe{border-left:3px solid var(--safe)}
+.lab{background:linear-gradient(120deg,#101b30,#101522);border:1px solid #31415d;border-radius:18px;padding:28px}
+.codebox{font-family:Consolas,monospace;background:#060a12;border:1px solid #26344d;border-radius:12px;padding:16px;color:#9fe8ff;overflow:auto}
+.warning{margin-top:16px;padding:14px;border-radius:10px;background:#241722;border:1px solid #6c3143;color:#ffc3ce}
+.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:20px}
+.check{padding:15px;border-radius:12px;background:#0c1724;border:1px solid var(--line)}
+.check:before{content:"✓";color:var(--safe);font-weight:900;margin-right:9px}
+footer{border-top:1px solid var(--line);padding:35px 0;color:var(--muted);text-align:center}
+@media(max-width:800px){.hero-grid,.grid,.three,.flow,.checks{grid-template-columns:1fr}.hero{padding-top:35px}.wifi-scene{height:300px}nav div:last-child{display:none}}
+.reveal{animation:rise .8s both}.delay{animation-delay:.18s}@keyframes rise{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:none}}
+</style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<nav>
+  <div class="logo">CYBER<span>SAFE</span> / EVIL TWIN</div>
+  <div><a href="#what">What is it?</a><a href="#risks">Risks</a><a href="#lab">Lab</a><a href="#protect">Protection</a></div>
+</nav>
+
+<header class="hero">
+<div class="container hero-grid">
+  <div class="reveal">
+    <span class="badge">CYBERSECURITY AWARENESS</span>
+    <h1>Don't trust every<br><span>Wi‑Fi name.</span></h1>
+    <p class="lead">An <b>Evil Twin</b> is a rogue wireless access point designed to imitate a legitimate network. This page explains the idea, risks, and defensive practices using a safe visual simulation.</p>
+    <a class="btn" href="#what">Learn how it works</a>
+    <a class="btn alt" href="#protect">Stay protected</a>
+  </div>
+  <div class="card wifi-scene reveal delay" aria-label="Animated Evil Twin illustration">
+    <div class="router"></div><div class="signal"></div>
+    <div class="laptop"><div class="screen">☁<br>Connected<br><small>“CoffeeShopWiFi”</small></div></div>
+    <i class="packet"></i><i class="packet p2"></i><i class="packet p3"></i>
+  </div>
+</div>
+</header>
+
+<section id="what">
+<div class="container">
+  <h2 class="section-title">What is an Evil Twin Attack?</h2>
+  <p class="section-sub">A simple way to understand the deception.</p>
+  <div class="grid">
+    <article class="card"><div class="icon">☕</div><h3>The normal situation</h3><p>You visit a coffee shop and see a network such as <b>“CoffeeShopWiFi”</b>. You assume it belongs to the business.</p></article>
+    <article class="card"><div class="icon">👤</div><h3>The fake network</h3><p>An attacker creates a nearby rogue access point using a name that resembles the legitimate network. A victim may connect without realizing the difference.</p></article>
+    <article class="card"><div class="icon">🎭</div><h3>The deception</h3><p>Once connected, the attacker may attempt traffic interception, phishing, malicious redirection, or other attacks against vulnerable users and devices.</p></article>
+    <article class="card"><div class="icon">🛡️</div><h3>The defense</h3><p>Verify the network with staff, use encrypted connections, keep devices updated, disable unnecessary auto-connect, and avoid sensitive activity on untrusted networks.</p></article>
+  </div>
+</div>
+</section>
+
+<section id="risks">
+<div class="container">
+  <h2 class="section-title">Security Risks</h2>
+  <p class="section-sub">The actual impact depends on the victim's device, applications, encryption, and the attacker's capabilities.</p>
+  <div class="grid three">
+    <article class="card risk"><div class="icon">🔎</div><h3>Traffic interception</h3><p>Unencrypted traffic can expose information to an attacker positioned between a device and the Internet.</p></article>
+    <article class="card risk"><div class="icon">🎣</div><h3>Phishing</h3><p>Users may be directed toward convincing fake pages that attempt to collect credentials or other sensitive information.</p></article>
+    <article class="card risk"><div class="icon">🦠</div><h3>Malware</h3><p>Fake portals or malicious content can be used to persuade users to install unsafe software or profiles.</p></article>
+    <article class="card risk"><div class="icon">🔑</div><h3>Session attacks</h3><p>Weakly protected sessions can sometimes be targeted, especially when applications or protocols are not properly secured.</p></article>
+    <article class="card risk"><div class="icon">📡</div><h3>Network impersonation</h3><p>A familiar SSID can create false confidence even though the wireless access point is not operated by the expected organization.</p></article>
+    <article class="card safe"><div class="icon">🔐</div><h3>Encryption helps</h3><p>HTTPS, properly configured applications, and end-to-end encryption can significantly reduce what a rogue network can read.</p></article>
+  </div>
+</div>
+</section>
+
+<section id="flow">
+<div class="container">
+  <h2 class="section-title">Attack concept — visualized</h2>
+  <p class="section-sub">This is a conceptual flow for awareness and authorized lab education.</p>
+  <div class="flow">
+    <div class="step"><b>1</b><strong>Legitimate Wi‑Fi</strong><p>Victim sees a familiar SSID.</p></div>
+    <div class="step"><b>2</b><strong>Rogue AP</strong><p>A nearby access point imitates it.</p></div>
+    <div class="step"><b>3</b><strong>Victim connects</strong><p>The device associates with the wrong network.</p></div>
+    <div class="step"><b>4</b><strong>Attack attempts</strong><p>Phishing or traffic attacks may follow.</p></div>
+  </div>
+</div>
+</section>
+
+<section id="lab">
+<div class="container">
+  <div class="lab">
+    <h2 class="section-title">Authorized lab setup</h2>
+    <p class="section-sub">For a classroom or home cybersecurity lab, reproduce the concept with devices and networks you own or have explicit permission to test.</p>
+    <div class="codebox">
+# Safe lab outline — conceptual only<br>
+1. Create an isolated test network.<br>
+2. Use a test SSID that is clearly yours.<br>
+3. Connect a dedicated test client.<br>
+4. Observe DHCP/DNS/network behavior with Wireshark.<br>
+5. Verify how HTTPS and VPN encryption protect traffic.<br>
+6. Tear down the lab after testing.
+    </div>
+    <div class="warning">⚠️ Do not use a rogue access point, captive portal, credential collection, DNS spoofing, or traffic interception against networks or people without explicit authorization.</div>
+  </div>
+</div>
+</section>
+
+<section id="protect">
+<div class="container">
+  <h2 class="section-title">How to Stay Safe</h2>
+  <p class="section-sub">A practical checklist for everyday users.</p>
+  <div class="checks">
+    <div class="check">Confirm the exact Wi‑Fi name with staff.</div>
+    <div class="check">Avoid banking and other sensitive tasks on untrusted public Wi‑Fi.</div>
+    <div class="check">Use a reputable VPN when appropriate.</div>
+    <div class="check">Check for HTTPS and a valid certificate before entering sensitive data.</div>
+    <div class="check">Keep your operating system, browser, and security software updated.</div>
+    <div class="check">Disable automatic connection to open or unknown Wi‑Fi networks.</div>
+    <div class="check">Prefer cellular data when you cannot verify a public network.</div>
+    <div class="check">Use MFA on important accounts so a stolen password is less useful.</div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">Cybersecurity Awareness • Evil Twin Attack • Educational Demonstration</div>
+</footer>
+</body>
+</html>
